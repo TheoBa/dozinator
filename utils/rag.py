@@ -31,8 +31,8 @@ def get_context(query_text, db_path):
     return results
 
 
-def answer_question(query_text):
-    results = get_context(query_text=query_text, db_path=CHROMA_PATH)
+def answer_question(query_text, db_path: str = CHROMA_PATH):
+    results = get_context(query_text=query_text, db_path=db_path)
     sources = [(doc.metadata.get("source", None), doc.metadata.get("page", None)) for doc in results]
     fromatted_sources = "\n\n".join([source + ' à la page: ' + str(page+1) for source, page in sources])
     

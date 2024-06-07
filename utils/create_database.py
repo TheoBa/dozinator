@@ -12,13 +12,13 @@ DATA_PATH = "data/dunod_physique.pdf"
 
 
 def generate_data_store():
-    documents = load_documents()
+    documents = load_document(data_path=DATA_PATH)
     chunks = split_text(documents)
-    save_to_chroma(chunks)
+    save_to_chroma(chunks, db_path=CHROMA_PATH)
 
 
-def load_documents():
-    loader = PyPDFLoader(DATA_PATH)
+def load_document(data_path: str = DATA_PATH):
+    loader = PyPDFLoader(data_path)
     documents = loader.load()
     return documents
 
@@ -33,24 +33,20 @@ def split_text(documents: list[Document]):
     chunks = text_splitter.split_documents(documents)
     print(f"Split {len(documents)} documents into {len(chunks)} chunks.")
 
-    document = chunks[10]
-    print(document.page_content)
-    print(document.metadata)
-
     return chunks
 
 
-def save_to_chroma(chunks: list[Document]):
+def save_to_chroma(chunks: list[Document], db_path: str = CHROMA_PATH):
     # Clear out the database first.
-    if os.path.exists(CHROMA_PATH):
-        shutil.rmtree(CHROMA_PATH)
+    if os.path.exists(db_path):
+        shutil.rmtree(db_path)
 
     # Create a new DB from the documents.
     db = Chroma.from_documents(
         documents=chunks, 
         embedding=OpenAIEmbeddings(), 
-        persist_directory=CHROMA_PATH
+        persist_directory=db_path
     )
     db.persist()
     db.heartbeat()
-    print(f"Saved {len(chunks)} chunks to {CHROMA_PATH}.")
+    print(f"Saved {len(chunks)} chunks to {db_path}.")
