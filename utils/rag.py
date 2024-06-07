@@ -40,7 +40,7 @@ def answer_question(query_text, db_path: str = CHROMA_PATH):
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
     
-    model = ChatOpenAI(model="gpt-3.5-turbo")
+    model = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=st.secrets["OPENAI_API_KEY"])
     response_text = model.predict(prompt)
 
     formatted_response = f"{response_text}\n\n\nLes documents les plus pertinents utilisés pour cette réponse:\n\n {fromatted_sources}"
