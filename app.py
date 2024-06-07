@@ -1,6 +1,6 @@
 import streamlit as st
 from utils.create_database import generate_data_store
-from utils.rag import answer_question
+from utils.rag import answer_question, get_context
 
 st.set_page_config(page_title='DOZinator', page_icon='📚', layout="wide")
 
@@ -23,17 +23,19 @@ def chat():
 
     # Accept user input
     if prompt := st.chat_input("Ask your physics related question"):
-        # Display user message in chat message container
-        st.chat_message("user").markdown(prompt)
-        # Add user message to chat history
-        st.session_state.messages.append({"role": "user", "content": prompt})
+        add_chat_message(user='user', text=prompt)
         
         response = answer_question(prompt)
 
-        # Display assistant response in chat message container
-        st.chat_message("assistant").markdown(response)
-        # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        add_chat_message(user='assistant', text=response)
+
+
+def add_chat_message(user: str, text: str):
+    # Display assistant response in chat message container
+    st.chat_message(user).markdown(text)
+    # Add assistant response to chat history
+    st.session_state.messages.append({"role": user, "content": text})
+
 
 if __name__ == "__main__":
     welcome_page()
