@@ -1,15 +1,24 @@
 import streamlit as st
-from utils.create_database import generate_data_store
-from utils.rag import answer_question, get_context
+from utils.rag import answer_question
 
 st.set_page_config(page_title='DOZinator', page_icon='📚', layout="wide")
 
 
 def welcome_page():
-    st.title("Welcome to the DOZinator")
-    st.button('Create vector database based on your documents', on_click=generate_data_store)
-    chat()
-
+    st.title("Welcome to Dozinator's front page")
+    url = "https://github.com/TheoBa/dozinator"
+    st.markdown("This personnal project is open source, see the repo on github: [link](%s)" % url)
+    st.header("Pages description")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("**App**")
+        st.markdown("The front page you are currently on")
+    with col2:
+        st.markdown("**Upload files**")
+        st.markdown("Upload your documents and create your own embedded database")
+    with col3:
+        st.markdown("**Chat with rag**")
+        st.markdown("Interract with your custom DB thx to the RAG architecture")
 
 def chat():
     # Initialize chat history

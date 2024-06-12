@@ -11,11 +11,10 @@ CHROMA_PATH = "data/chroma_emb"
 MODEL = "gpt-3.5-turbo"
 MODEL = "mixtral:8x7b"
 PROMPT_TEMPLATE = """
-Réponds à la question posée ci-dessous en te basant sur le contexte fournit.
-Si tu ne peux pas répondre précisément à la question, précise "Le contexte fournit ne me permet pas de répondre précisément à votre question".
-Mais donne la réponse la plus probable selon toi.
+Answer the following question based on the context provided.
+If you cannot answer precisely to the question, precise that your answer is not entirely based on the context provided.
 
-Contexte: {context}
+Context: {context}
 
 Question: {question}
 """
@@ -46,3 +45,15 @@ def answer_question(query_text, db_path: str = CHROMA_PATH):
     formatted_response = f"{response_text}\n\n\nLes documents les plus pertinents utilisés pour cette réponse:\n\n {fromatted_sources}"
     
     return formatted_response
+
+
+def litterature_review(questions, paper_path):
+    answers = []
+    for query_text in questions:
+        results = get_context(query_text=query_text, db_path=paper_path)
+        context_text = "\n\n---\n\n".join([doc.page_content for doc in results])
+        prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+        prompt = prompt_template.format(context=context_text, question=query_text)
+        model = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=st.secrets["OPENAI_API_KEY"])
+        answers += [model.predict(prompt)]
+    return answers

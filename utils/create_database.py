@@ -7,14 +7,15 @@ from langchain_community.document_loaders import PyPDFLoader
 import os
 import shutil
 
+
 CHROMA_PATH = "data/chroma_emb"
 DATA_PATH = "data/dunod_physique.pdf"
 
 
-def generate_data_store():
-    documents = load_document(data_path=DATA_PATH)
+def generate_data_store(doc_path: str = DATA_PATH, db_path: str = CHROMA_PATH):
+    documents = load_document(data_path=doc_path)
     chunks = split_text(documents)
-    save_to_chroma(chunks, db_path=CHROMA_PATH)
+    save_to_chroma(chunks, db_path=db_path)
 
 
 def load_document(data_path: str = DATA_PATH):
@@ -48,5 +49,4 @@ def save_to_chroma(chunks: list[Document], db_path: str = CHROMA_PATH):
         persist_directory=db_path
     )
     db.persist()
-    db.heartbeat()
     print(f"Saved {len(chunks)} chunks to {db_path}.")
